@@ -1,28 +1,19 @@
 <script setup>
-import { ref } from 'vue'
-
-const props = defineProps({
-  svg: Object
-})
-
-const flipped = ref(false)
-
-function flipCard() {
-  flipped.value = !flipped.value
-}
+defineProps({
+  svg: Object,
+  flipped: Boolean,
+  matched: Boolean,
+});
+defineEmits(['click']);
 </script>
 
 <template>
-  <div class="card" @click="flipCard">
-    <div class="card-inner" :class="{ flipped }">
-      <!-- Front side (icon) -->
-      <div class="card-face card-front">
-        <!-- Example placeholder, can be image or text -->
-        ❓
-      </div>
-      <!-- Back side (cover or pattern) -->
+  <div class="card" @click="$emit('click')">
+    <div class="card-inner" :class="{ flipped: flipped || matched }">
+      <!-- Front side (question mark) -->
+      <div class="card-face card-front">❓</div>
+      <!-- Back side (icon) -->
       <div class="card-face card-back" v-html="svg.svg" />
-
     </div>
   </div>
 </template>
@@ -60,7 +51,7 @@ function flipCard() {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.card-front{
+.card-front {
   width: 80px;
   height: 80px;
 }
@@ -70,6 +61,7 @@ function flipCard() {
   font-size: 32px;
 }
 </style>
+
 <style>
 .card svg {
   width: 80px;

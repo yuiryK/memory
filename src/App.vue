@@ -22,28 +22,38 @@ function shuffleArray(array) {
 onMounted(() => {
   // При монтировании — просто берём первые 16 SVG
   const shuffledIcons = shuffleArray(svgCardIcons);
-  icons.value = shuffledIcons.slice(0, total)
+  icons.value = shuffledIcons.slice(0, total).map((svg, index) => ({
+    id: svg.id,
+    svg: svg.svg,
+    flipped: false,
+    matched: false
+  }));
 })
 
-function onCardClick(index) {
-  // если уже угадана или уже открыта — игнор
-  if (flippedCards.value.includes(index) || matchedCards.value.includes(index)) return;
-  if (flippedCards.value.length === 2) return; // блокируем лишние клики
 
-  flippedCards.value.push(index)
+function handleCardClick(card) {
+  if (card.flipped || card.matched || flippedCards.value.length === 2) return;
+
+  card.flipped = true;
+  flippedCards.value.push(card);
 
   if (flippedCards.value.length === 2) {
-    const [first, second] = flippedCards.value
-    if (icons.value[first].name === icons.value[second].name) {
-      matchedCards.value.push(first, second)
-      flippedCards.value = []
+    const [first, second] = flippedCards.value;
+    if (first.id === second.id) {
+      first.matched = true;
+      second.matched = true;
+      flippedCards.value = [];
     } else {
       setTimeout(() => {
-        flippedCards.value = []
-      }, 1000)
+        first.flipped = false;
+        second.flipped = false;
+        flippedCards.value = [];
+      }, 500);
     }
   }
 }
+
+
 </script>
 
 <template>
@@ -58,14 +68,14 @@ function onCardClick(index) {
         margin: '0 auto'
       }"
     >
-      <Card
-        v-for="(icon, index) in icons"
-        :key="index"
-        :svg="icon"
-        :isFlipped="flippedCards.includes(index) || matchedCards.includes(index)"
-        :isMatched="matchedCards.includes(index)"
-        @click="onCardClick(index)"
-      />
+<Card
+  v-for="(card, index) in icons"
+  :key="index"
+  :svg="card"
+  :flipped="card.flipped"
+  :matched="card.matched"
+  @click="handleCardClick(card)"
+/>
     </div>
   </div>
 </template>
