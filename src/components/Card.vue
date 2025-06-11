@@ -8,7 +8,7 @@ defineEmits(['click']);
 </script>
 
 <template>
-  <div class="card" @click="$emit('click')">
+  <div class="card" @click="$emit('click')" :class="{ hidden: matched }">
     <div class="card-inner" :class="{ flipped: flipped || matched }">
       <!-- Front side (question mark) -->
       <div class="card-face card-front">❓</div>
@@ -17,6 +17,7 @@ defineEmits(['click']);
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .card {
@@ -59,6 +60,12 @@ defineEmits(['click']);
 .card-back {
   transform: rotateY(180deg);
   font-size: 32px;
+}
+.card.hidden {
+  opacity: 0;
+  pointer-events: none;
+  visibility: hidden; /* Можно скрыть для скринридеров и т.п. */
+  transition: opacity 0.3s ease;
 }
 </style>
 
