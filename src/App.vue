@@ -10,6 +10,9 @@ const icons = ref([])
 const flippedCards = ref([])
 const matchedCards = ref([])
 
+const moves = ref(0)
+const gameFinished = ref(false);
+
 function shuffleArray(array) {
   const shuffled = array.slice(); // копия массива
   for (let i = shuffled.length - 1; i > 0; i--) {
@@ -34,6 +37,7 @@ onMounted(() => {
 function handleCardClick(card) {
   if (card.flipped || card.matched || flippedCards.value.length === 2) return;
 
+  moves.value++;
   card.flipped = true;
   flippedCards.value.push(card);
 
@@ -43,6 +47,11 @@ function handleCardClick(card) {
       first.matched = true;
       second.matched = true;
       flippedCards.value = [];
+      if (icons.value.every(card => card.matched)) {
+          setTimeout(() => {
+          gameFinished.value = true;
+              }, 600); // Немного задержки, чтобы анимация успела закончиться
+         }
     } else {
       setTimeout(() => {
         first.flipped = false;
@@ -53,12 +62,26 @@ function handleCardClick(card) {
   }
 }
 
+function restartGame() {
+  const shuffled = shuffleArray(svgCardIcons).slice(0, total);
+  icons.value = shuffled.map(svg => ({
+    id: svg.id,
+    svg: svg.svg,
+    flipped: false,
+    matched: false,
+  }));
+  moves.value = 0;
+  gameFinished.value = false;
+}
 
 </script>
 
 <template>
-  <div class="flex justify-center items-center min-h-screen bg-gray-100 px-4">
+  <div class="game-board flex justify-center items-center min-h-screen bg-gray-100 px-4">
+
+    <!-- Карточки — показываются, пока игра не завершена -->
     <div
+      v-if="!gameFinished"
       class="grid gap-x-6 gap-y-6 p-6 bg-white shadow-xl rounded-xl"
       :style="{
         gridTemplateColumns: `repeat(${side}, minmax(100px, 1fr))`,
@@ -68,17 +91,33 @@ function handleCardClick(card) {
         margin: '0 auto'
       }"
     >
-<Card
-  v-for="(card, index) in icons"
-  :key="index"
-  :svg="card"
-  :flipped="card.flipped"
-  :matched="card.matched"
-  @click="handleCardClick(card)"
-/>
+      <Card
+        v-for="(card, index) in icons"
+        :key="index"
+        :svg="card"
+        :flipped="card.flipped"
+        :matched="card.matched"
+        @click="handleCardClick(card)"
+      />
     </div>
+
+    <!-- Статистика — появляется, когда игра завершена -->
+    <transition name="fade-scale">
+      <div v-if="gameFinished" class="game-summary text-center bg-white p-8 rounded-xl shadow-xl">
+        <h2 class="text-2xl font-bold mb-4">🎉 Игра завершена!</h2>
+        <p class="text-lg mb-4">Количество ходов: {{ moves }}</p>
+        <button
+          @click="restartGame"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+        >
+          Сыграть ещё раз
+        </button>
+      </div>
+    </transition>
+
   </div>
 </template>
+
 
 
 
