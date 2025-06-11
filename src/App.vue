@@ -8,9 +8,19 @@ const total = side.value * side.value
 
 const icons = ref([])
 
+function shuffleArray(array) {
+  const shuffled = array.slice(); // копия массива
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 onMounted(() => {
   // При монтировании — просто берём первые 16 SVG
-  icons.value = svgCardIcons.slice(0, total)
+  const shuffledIcons = shuffleArray(svgCardIcons);
+  icons.value = shuffledIcons.slice(0, total)
 })
 </script>
 
