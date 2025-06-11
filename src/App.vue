@@ -7,6 +7,8 @@ const side = ref(4)
 const total = side.value * side.value
 
 const icons = ref([])
+const flippedCards = ref([])
+const matchedCards = ref([])
 
 function shuffleArray(array) {
   const shuffled = array.slice(); // копия массива
@@ -22,6 +24,26 @@ onMounted(() => {
   const shuffledIcons = shuffleArray(svgCardIcons);
   icons.value = shuffledIcons.slice(0, total)
 })
+
+function onCardClick(index) {
+  // если уже угадана или уже открыта — игнор
+  if (flippedCards.value.includes(index) || matchedCards.value.includes(index)) return;
+  if (flippedCards.value.length === 2) return; // блокируем лишние клики
+
+  flippedCards.value.push(index)
+
+  if (flippedCards.value.length === 2) {
+    const [first, second] = flippedCards.value
+    if (icons.value[first].name === icons.value[second].name) {
+      matchedCards.value.push(first, second)
+      flippedCards.value = []
+    } else {
+      setTimeout(() => {
+        flippedCards.value = []
+      }, 1000)
+    }
+  }
+}
 </script>
 
 <template>
@@ -40,6 +62,9 @@ onMounted(() => {
         v-for="(icon, index) in icons"
         :key="index"
         :svg="icon"
+        :isFlipped="flippedCards.includes(index) || matchedCards.includes(index)"
+        :isMatched="matchedCards.includes(index)"
+        @click="onCardClick(index)"
       />
     </div>
   </div>
