@@ -1,11 +1,11 @@
 <script setup>
-import { svgCardIcons } from '@/assets/cards';
-
-</script>   
+defineProps({
+  svg: Object
+})
+</script>
 
 <template>
-  <div  v-for="(svg, id) in svgCardIcons" :key="id" class="icon" v-html="svg.svg">
-  </div>
+  <div class="icon" v-html="svg.svg"></div>
 </template>
 
 <style scoped>
@@ -22,15 +22,15 @@ import { svgCardIcons } from '@/assets/cards';
   transition: box-shadow 0.3s ease;
 }
 
-.svg-wrapper:hover {
+.icon:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 </style>
-
 <style>
 .icon svg {
   width: 80px;
   height: 80px;
   display: block;
-}</style>
+}
+</style>
