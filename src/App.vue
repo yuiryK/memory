@@ -137,8 +137,10 @@ function restartGame() {
 
 
 <style scoped>
-/* tailwind уже задаёт gap, но можно усилить так */
 .grid {
   display: grid;
+}
+footer {
+  margin-top: auto
 }
 </style>
