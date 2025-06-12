@@ -14,7 +14,7 @@ const moves = ref(0)
 const gameFinished = ref(false);
 
 function shuffleArray(array) {
-  const shuffled = array.slice(); // копия массива
+  const shuffled = array.slice(); 
   for (let i = shuffled.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
@@ -23,7 +23,7 @@ function shuffleArray(array) {
 }
 
 onMounted(() => {
-  // При монтировании — просто берём первые 16 SVG
+  // Shuffle icons and select the first 'total' icons
   const shuffledIcons = shuffleArray(svgCardIcons);
   icons.value = shuffledIcons.slice(0, total).map((svg, index) => ({
     id: svg.id,
@@ -50,7 +50,7 @@ function handleCardClick(card) {
       if (icons.value.every(card => card.matched)) {
           setTimeout(() => {
           gameFinished.value = true;
-              }, 600); // Немного задержки, чтобы анимация успела закончиться
+              }, 600); // A little delay to finish the last flip
          }
     } else {
       setTimeout(() => {
@@ -77,46 +77,61 @@ function restartGame() {
 </script>
 
 <template>
-  <div class="game-board flex justify-center items-center min-h-screen bg-gray-100 px-4">
+  <div class="min-h-screen flex flex-col bg-gradient-to-b from-blue-50 to-indigo-100 text-gray-800">
 
-    <!-- Карточки — показываются, пока игра не завершена -->
-    <div
-      v-if="!gameFinished"
-      class="grid gap-x-6 gap-y-6 p-6 bg-white shadow-xl rounded-xl"
-      :style="{
-        gridTemplateColumns: `repeat(${side}, minmax(100px, 1fr))`,
-        gap: '24px',
-        maxWidth: `${side * 140}px`,
-        width: '100%',
-        margin: '0 auto'
-      }"
-    >
-      <Card
-        v-for="(card, index) in icons"
-        :key="index"
-        :svg="card"
-        :flipped="card.flipped"
-        :matched="card.matched"
-        @click="handleCardClick(card)"
-      />
-    </div>
+    <!-- Header -->
+    <header class="text-center py-6 bg-white shadow-md">
+      <h1 class="text-4xl font-bold text-indigo-700">🧠 Mälumäng</h1>
+      <p class="mt-2 text-gray-600">Leia kõik ühesuguste kaartide paarid</p>
+    </header>
 
-    <!-- Статистика — появляется, когда игра завершена -->
-    <transition name="fade-scale">
-      <div v-if="gameFinished" class="game-summary text-center bg-white p-8 rounded-xl shadow-xl">
-        <h2 class="text-2xl font-bold mb-4">🎉 Игра завершена!</h2>
-        <p class="text-lg mb-4">Количество ходов: {{ moves }}</p>
-        <button
-          @click="restartGame"
-          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
-        >
-          Сыграть ещё раз
-        </button>
+    <!-- Game board -->
+    <main class="flex-grow flex justify-center items-center px-4 py-8">
+      <!-- Cards -->
+      <div
+        v-if="!gameFinished"
+        class="grid gap-x-6 gap-y-6 p-6 bg-white shadow-xl rounded-xl"
+        :style="{
+          gridTemplateColumns: `repeat(${side}, minmax(100px, 1fr))`,
+          gap: '24px',
+          maxWidth: `${side * 140}px`,
+          width: '100%',
+          margin: '0 auto'
+        }"
+      >
+        <Card
+          v-for="(card, index) in icons"
+          :key="index"
+          :svg="card"
+          :flipped="card.flipped"
+          :matched="card.matched"
+          @click="handleCardClick(card)"
+        />
       </div>
-    </transition>
 
+      <!-- Statistics of game -->
+      <transition name="fade-scale">
+        <div v-if="gameFinished" class="game-summary text-center bg-white p-8 rounded-xl shadow-xl">
+          <h2 class="text-2xl font-bold mb-4">🎉 Mäng on lõppenud!</h2>
+          <p class="text-lg mb-4">Käikude arv: {{ moves }}</p>
+          <button
+            @click="restartGame"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition"
+          >
+            Mängi uuesti
+          </button>
+        </div>
+      </transition>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-sm text-gray-500 bg-white border-t">
+      &copy; 2025. Mäng on loodud Vue.js abil
+    </footer>
+    
   </div>
 </template>
+
 
 
 

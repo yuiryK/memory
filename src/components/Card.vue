@@ -64,7 +64,7 @@ defineEmits(['click']);
 .card.hidden {
   opacity: 0;
   pointer-events: none;
-  visibility: hidden; /* Можно скрыть для скринридеров и т.п. */
+  visibility: hidden; 
   transition: opacity 0.3s ease;
 }
 </style>
