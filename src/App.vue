@@ -114,7 +114,7 @@ function restartGame() {
         <div v-if="gameFinished" class="game-summary text-center bg-white p-8 rounded-xl shadow-xl">
           <h2 class="text-2xl font-bold mb-4">🎉 Mäng on lõppenud!</h2>
           <p class="text-lg mb-4">Käikude arv: {{ moves }}</p>
-          <button
+          <button style="margin-bottom: 2rem;"
             @click="restartGame"
             class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition"
           >
